@@ -1,5 +1,5 @@
 import sys
-from distance_calculations import calculate_distance, calculate_distance_matrix
+from models.distance_calculations import calculate_distance, calculate_distance_matrix
 import pandas as pd
 
 # Load airport data
