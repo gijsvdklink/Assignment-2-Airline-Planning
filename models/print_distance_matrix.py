@@ -6,7 +6,7 @@ import pandas as pd
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(project_root)
 
-from models.distance_calculations import calculate_distance, calculate_distance_matrix
+from models.distance_calculations import calculate_distance_matrix
 
 # Load airport data
 data_file_path = 'AirportData.xlsx'
@@ -14,9 +14,6 @@ airport_data = pd.read_excel(data_file_path, sheet_name='Airport', header=None)
 airport_data_transposed = airport_data.transpose()
 airport_data_transposed.columns = airport_data_transposed.iloc[0]
 airport_data_transposed = airport_data_transposed[1:]
-
-print("\nTransposed Airport Data:")
-print(airport_data_transposed)
 
 # Calculate distances
 latitudes = airport_data_transposed['Latitude (deg)'].astype(float).values
@@ -28,11 +25,21 @@ distance_df = pd.DataFrame(distance_matrix, index=city_names, columns=city_names
 
 # Round distance values
 distance_df = distance_df.round(1)
-print("\nDistance Matrix from airport i to airport j [km]:")
-print(distance_df)
 
-# Save distance matrix to a CSV file
-output_csv_path = 'DistanceMatrix.csv'  # Specify the path and name of the CSV file
-distance_df.to_csv(output_csv_path, index=True)
+# Filter distances involving Frankfurt (FRA) and save to CSV
+if 'FRA' in distance_df.index and 'FRA' in distance_df.columns:
+    fra_distances = distance_df.loc['FRA']  # Distances from FRA to all airports
 
-print(f"\nDistance Matrix has been saved to '{output_csv_path}'")
+    # Create a single-column DataFrame
+    filtered_distance_df = pd.DataFrame({
+        "Distance to/from FRA": fra_distances
+    })
+
+    # Save the filtered distance matrix to a CSV file
+    output_filtered_csv_path = 'DistanceMatrix_FRA.csv'
+    filtered_distance_df.to_csv(output_filtered_csv_path, index=True)
+
+    # Print the filtered distance matrix
+    print(filtered_distance_df)
+else:
+    print("\nFRA not found in the dataset. No filtered distance matrix was saved.")
