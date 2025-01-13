@@ -2,11 +2,11 @@ import os
 import sys
 import pandas as pd
 
-# Add the project root directory to Python's module search path
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(project_root)
 
-from models.distance_calculations import calculate_distance_matrix
+
+from relevant_models.step_1_distance_calculations import calculate_distance_matrix
 
 # Load airport data
 data_file_path = 'AirportData.xlsx'
