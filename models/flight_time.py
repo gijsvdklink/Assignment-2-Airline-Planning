@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 # Load the filtered distance matrix file
 distance_matrix_path = 'DistanceMatrix_FRA.csv'
@@ -25,11 +26,20 @@ fleet_data = pd.DataFrame({
 # Create a DataFrame to store flight times
 flight_times_df = pd.DataFrame(index=fra_distances.index)
 
+# Function to round up to the nearest multiple of 6
+def round_up_to_multiple_of_6(x):
+    return int(np.ceil(x / 6.0) * 6)
+
 # Calculate flight time for each aircraft type and add it to the DataFrame
 for _, row in fleet_data.iterrows():
     type_name = row['Type']
     speed = row['Speed']
-    flight_times_df[type_name] = (fra_distances / speed).round(2)  # Flight time in hours
+    tat = row['TAT']
+    # Calculate flight time in minutes and round up to nearest multiple of 6
+    flight_times_df[type_name] = (
+        ((((fra_distances / speed) + 0.5) * 60) + tat)
+        .apply(round_up_to_multiple_of_6)
+    )
 
 # Save the flight times to a CSV file
 output_csv_path = 'FlightTimes_FRA.csv'
